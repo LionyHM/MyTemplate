@@ -22,7 +22,7 @@ export default function Layout(props: LayoutProps){
             `}>
                 <Cabecalho titulo={props.titulo} subtitulo={props.subtitulo}/>
                 <Conteudo>
-
+            
                 </Conteudo>
             </div>
         </div>
