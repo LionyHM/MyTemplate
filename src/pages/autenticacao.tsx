@@ -1,30 +1,53 @@
 import { useState } from "react";
-import AuthInput from "../components/auth/Authinput";
+import AuthInput from "../components/auth/AuthInput";
+import { IconeAlerta } from "../components/icons";
+import useAuth from "../data/hook/useAuth";
 
 export default function Autenticacao(){
+
+    const {usuario, loginGoogle} = useAuth()
+
     const [modo, setModo] = useState<"login" | "cadastro">('login')
+    const [erro, setErro] = useState(null)
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
 
+    function exibirErro(msg, tempoEmSegundos = 5){
+        setErro(msg)
+        setTimeout(()=>{setErro(null)}, tempoEmSegundos * 1000)
+    }
+
     function submeter() {
         if(modo === 'login'){
-            console.log('login')
+            exibirErro("Ocorreu um erro no Login!")
         }else{
-            console.log('cadastrar')
+            exibirErro("Ocorreu um erro no Cadastro!")
         }
     }
 
     return (
         <div className={`flex h-screen items-center justify-center`}>
             <div className={`hidden md:block md:w-1/2 lg:w-2/3`}>
-                <img src="https://source.unsplash.com/random"
-                 alt="Imagem da Tela de Autenticação"
-                 className="h-screen w-full object-cover" />
+                <img src="https://picsum.photos/1200"
+                    alt="Imagem da Tela de Autenticação"
+                    className="h-screen w-full object-cover" />
             </div>
             <div className={`m-10 w-full md:w-1/2 lg:w-1/3`}>
                 <h1 className={`text-3xl font-bold mb-5`}>
                     {modo === 'login' ? 'Entre com a Sua Conta' : 'Cadastre-se na Plataforma'}
                 </h1>
+
+                {erro ? (
+                    <div className={`
+                    flex items-center
+                    bg-red-400 text-white py-3 px-5 my-2
+                    border border-red-700
+                `}>
+                    {IconeAlerta()}
+                    <span className={`ml-3`}>{erro}</span>
+
+                </div>
+                ) : false}
             
                 <AuthInput
                     label="Email"
@@ -50,7 +73,7 @@ export default function Autenticacao(){
 
                 <hr className="my-6 border-gray-300 w-full"/>
 
-                <button onClick={submeter} className={`flex justify-center
+                <button onClick={loginGoogle} className={`flex justify-center
                     w-full bg-red-500 hover:bg-red-400 text-white 
                     rounded-lg px-4 py-3 mt-6
                 `}>
