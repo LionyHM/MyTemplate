@@ -1,4 +1,5 @@
 import useAppData from "../../data/hook/useAppData";
+import forcarAutenticacao from "../../functions/forcarAutenticacao";
 import Cabecalho from "./Cabecalho";
 import Conteudo from "./Conteudo";
 import MenuLateral from "./MenuLateral";
@@ -11,7 +12,9 @@ interface LayoutProps{
 
 export default function Layout(props: LayoutProps){
     const ctx = useAppData()
-    return (
+
+    forcarAutenticacao
+    return forcarAutenticacao(
         <div className={`${ctx.tema}
             flex h-screen w-screen
         `}>

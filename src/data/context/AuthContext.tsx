@@ -6,7 +6,9 @@ import Usuario from "../../model/Usuarios";
 
 interface AuthContextProps{
     usuario?: Usuario
+    carregando?: boolean
     loginGoogle?: () => Promise<void>
+    logout?: () => Promise<void>
 }
 
 async function usuarioNormalizado(usuarioFirebase: firebase.User): Promise<Usuario>{
@@ -54,22 +56,43 @@ export function AuthProvider(props) {
     }
 
     async function loginGoogle() {        
-        const resp = await firebase.auth().signInWithPopup(
-            new firebase.auth.GoogleAuthProvider()
-        )
+        try{
+            setCarregando(true)
+            const resp = await firebase.auth().signInWithPopup(
+                new firebase.auth.GoogleAuthProvider()
+            )
+    
+           configurarSessao(resp.user)        
+           route.push('/')    
+        } finally{
+            setCarregando(false)
+        }
+    }
 
-       configurarSessao(resp.user)        
-       route.push('/')    
+    async function logout() {
+        try {
+            await firebase.auth().signOut()
+            await configurarSessao(null)
+        } finally {
+            setCarregando(false)
+        }
     }
 
     useEffect(() =>{
-        firebase.auth().onAuthStateChanged(configurarSessao)
+        if(Cookies.get('admin-template-auth')){
+            const cancelar = firebase.auth().onAuthStateChanged(configurarSessao)
+            return () => cancelar()
+        }else{
+            setCarregando(false)
+        }
     }, [])
 
     return (
         <AuthContext.Provider value={{
             usuario,
-            loginGoogle
+            carregando,
+            loginGoogle,
+            logout
         }}>
             {props.children}
         </AuthContext.Provider>
